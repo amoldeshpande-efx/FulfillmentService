@@ -1,0 +1,90 @@
+{
+  "displayName": "fulfillment-agent",
+  "description": "Equifax ICI Fulfillment Agent - Processes fulfillment requests via REST and MCP interfaces with Google Cloud Datastore persistence and Pub/Sub event publishing",
+  "agentConfig": {
+    "endpointUri": "https://fulfillment-agent-HASH.run.app",
+    "mcpConfig": {
+      "transport": "streamableHttp",
+      "endpoint": "/mcp",
+      "sseEndpoint": "/mcp/sse",
+      "tools": [
+        {
+          "name": "create_fulfillment_request",
+          "description": "Creates a new fulfillment request, validates it, saves to Datastore, and publishes to Pub/Sub"
+        },
+        {
+          "name": "save_to_datastore",
+          "description": "Saves a request entry directly to Google Cloud Datastore"
+        },
+        {
+          "name": "read_from_datastore",
+          "description": "Reads a request entry from Google Cloud Datastore by request ID"
+        },
+        {
+          "name": "update_in_datastore",
+          "description": "Updates an existing request entry in Google Cloud Datastore"
+        },
+        {
+          "name": "delete_from_datastore",
+          "description": "Deletes a request entry from Google Cloud Datastore by request ID"
+        },
+        {
+          "name": "publish_to_pubsub",
+          "description": "Publishes a message to the fulfillment-request-events Pub/Sub topic"
+        }
+      ]
+    },
+    "a2aConfig": {
+      "agentCard": {
+        "name": "fulfillment-agent",
+        "description": "Handles fulfillment request lifecycle - creation, validation, persistence, and event publishing",
+        "url": "https://fulfillment-agent-HASH.run.app",
+        "version": "1.0.0",
+        "capabilities": {
+          "streaming": true,
+          "pushNotifications": false,
+          "stateTransitionHistory": false
+        },
+        "skills": [
+          {
+            "id": "create-fulfillment-request",
+            "name": "Create Fulfillment Request",
+            "description": "Accepts a fulfillment request with customer and product data, validates it, persists to Datastore, and publishes event to Pub/Sub",
+            "tags": ["fulfillment", "request", "create"],
+            "examples": [
+              "Create a fulfillment request for customer CUST-001",
+              "Submit a new fulfillment order"
+            ]
+          },
+          {
+            "id": "manage-datastore-entries",
+            "name": "Manage Datastore Entries",
+            "description": "CRUD operations on fulfillment request entries in Google Cloud Datastore",
+            "tags": ["datastore", "crud", "persistence"],
+            "examples": [
+              "Look up fulfillment request REQ-12345",
+              "Update the status of request REQ-12345",
+              "Delete request REQ-12345"
+            ]
+          },
+          {
+            "id": "publish-events",
+            "name": "Publish Fulfillment Events",
+            "description": "Publishes fulfillment events to Pub/Sub for downstream processing",
+            "tags": ["pubsub", "events", "messaging"],
+            "examples": [
+              "Publish a fulfillment event for request REQ-12345"
+            ]
+          }
+        ],
+        "defaultInputModes": ["application/json"],
+        "defaultOutputModes": ["application/json"]
+      }
+    }
+  },
+  "labels": {
+    "team": "ews-vs-ici",
+    "environment": "dev",
+    "service": "fulfillment-agent"
+  }
+}

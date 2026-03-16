@@ -1,0 +1,73 @@
+{
+  "name": "fulfillment-agent",
+  "description": "Equifax ICI Fulfillment Agent with MCP and A2A protocol support",
+  "url": "https://fulfillment-agent-HASH.run.app",
+  "version": "1.0.0",
+  "documentationUrl": "https://fulfillment-agent-HASH.run.app/swagger-ui.html",
+  "provider": {
+    "organization": "Equifax EWS VS ICI",
+    "url": "https://www.equifax.com"
+  },
+  "capabilities": {
+    "streaming": true,
+    "pushNotifications": false,
+    "stateTransitionHistory": false
+  },
+  "authentication": {
+    "schemes": ["bearer"]
+  },
+  "defaultInputModes": ["application/json"],
+  "defaultOutputModes": ["application/json"],
+  "skills": [
+    {
+      "id": "create-fulfillment-request",
+      "name": "Create Fulfillment Request",
+      "description": "Accepts and processes a fulfillment request. Validates input, persists to Cloud Datastore, publishes event to Pub/Sub, and returns a tracking ID.",
+      "tags": ["fulfillment", "request", "create", "order"],
+      "examples": [
+        "Create a fulfillment request for customer CUST-001 with product PROD-ABC",
+        "Submit a new fulfillment order for equifax verification service"
+      ]
+    },
+    {
+      "id": "lookup-request",
+      "name": "Lookup Fulfillment Request",
+      "description": "Retrieves a fulfillment request from Datastore by its request ID.",
+      "tags": ["fulfillment", "lookup", "read", "query"],
+      "examples": [
+        "Look up fulfillment request REQ-12345",
+        "Get the status of my fulfillment order"
+      ]
+    },
+    {
+      "id": "update-request",
+      "name": "Update Fulfillment Request",
+      "description": "Updates an existing fulfillment request in Datastore.",
+      "tags": ["fulfillment", "update", "modify"],
+      "examples": [
+        "Update the status of request REQ-12345 to COMPLETED",
+        "Change the callback URL for my fulfillment request"
+      ]
+    },
+    {
+      "id": "delete-request",
+      "name": "Delete Fulfillment Request",
+      "description": "Deletes a fulfillment request from Datastore by its request ID.",
+      "tags": ["fulfillment", "delete", "remove"],
+      "examples": [
+        "Delete fulfillment request REQ-12345",
+        "Remove my cancelled fulfillment order"
+      ]
+    },
+    {
+      "id": "publish-event",
+      "name": "Publish Fulfillment Event",
+      "description": "Publishes a custom message to the fulfillment Pub/Sub topic for downstream consumers.",
+      "tags": ["pubsub", "event", "publish", "messaging"],
+      "examples": [
+        "Publish a fulfillment completion event",
+        "Send a notification that request REQ-12345 is ready"
+      ]
+    }
+  ]
+}
