@@ -1,0 +1,80 @@
+spring:
+  application:
+    name: fulfillment-agent
+  
+  # Google Cloud Configuration
+  cloud:
+    gcp:
+      project-id: ${GCP_PROJECT_ID:ews-vs-icie-dev-npe-0bb5}
+    
+    # Datastore Configuration
+    datastore:
+      kind: RequestEntry
+      namespace: ici_fulfillment
+  
+  # Pub/Sub Configuration
+  pubsub:
+    project-id: ${GCP_PROJECT_ID:ews-vs-icie-dev-npe-0bb5}
+    subscriber:
+      poll-duration-seconds: 1
+
+  # Mail Configuration (SMTP)
+  mail:
+    host: ${SMTP_HOST:mail.equifax.com}
+    port: ${SMTP_PORT:25}
+    username: ${SMTP_USERNAME:amol.deshpande@equifax.com}
+    protocol: smtp
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: ${SMTP_AUTH:false}
+
+# Server Configuration
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /
+  error:
+    include-message: always
+    include-binding-errors: always
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.equifax.ews.vs.ici: DEBUG
+    com.google.cloud: INFO
+    org.springframework.web: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg%n"
+  file:
+    name: logs/fulfillment-agent.log
+    max-size: 10MB
+    max-history: 10
+    total-size-cap: 1GB
+
+# OpenAPI / Swagger Configuration
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operations-sorter: method
+    tags-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  show-actuator: false
+
+# Custom Application Properties
+app:
+  pubsub:
+    topic: ${PUBSUB_TOPIC:fulfillment-request-events}
+    subscription: ${PUBSUB_SUBSCRIPTION:fulfillment-request-subscription}
+  datastore:
+    kind: ${DATASTORE_KIND:RequestEntry}
+  tracing:
+    correlation-id-header: X-Correlation-ID
+    enabled: true
+  email:
+    from: fulfillment-agent@equifax.com
+    enabled: true
