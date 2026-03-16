@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fulfillment-service
+  namespace: default
+  labels:
+    app: fulfillment-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fulfillment-service
+  template:
+    metadata:
+      labels:
+        app: fulfillment-service
+    spec:
+      serviceAccountName: fulfillment-sa
+      containers:
+        - name: fulfillment-service
+          image: us-central1-docker.pkg.dev/PROJECT_ID/fulfillment-repo/fulfillment-service:latest
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: GCP_PROJECT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: fulfillment-config
+                  key: gcp-project-id
+            - name: PUBSUB_TOPIC
+              valueFrom:
+                configMapKeyRef:
+                  name: fulfillment-config
+                  key: pubsub-topic
+            - name: DATASTORE_KIND
+              valueFrom:
+                configMapKeyRef:
+                  name: fulfillment-config
+                  key: datastore-kind
+            - name: JAVA_OPTS
+              value: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UseG1GC"
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          readinessProbe:
+            httpGet:
+              path: /api/v1/fulfillment/health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/v1/fulfillment/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fulfillment-service
+  namespace: default
+spec:
+  selector:
+    app: fulfillment-service
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+  type: ClusterIP
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fulfillment-config
+  namespace: default
+data:
+  gcp-project-id: "equifax-dev-project"
+  pubsub-topic: "fulfillment-request-events"
+  datastore-kind: "RequestEntry"
